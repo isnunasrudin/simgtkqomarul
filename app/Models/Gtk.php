@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Ref\TugasTambahan;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -34,6 +35,9 @@ class Gtk extends Model
         'photo',
         'satuan_kerja_id',
         'user_id',
+        'tugas_tambahan_id',
+        'mapel',
+        'mapel_point',
     ];
 
     protected static function boot()
@@ -86,5 +90,10 @@ class Gtk extends Model
     public function activeContract()
     {
         return $this->hasOne(GtkContract::class)->where('is_primary', true);
+    }
+
+    public function tugasTambahan()
+    {
+        return $this->belongsTo(TugasTambahan::class);
     }
 }

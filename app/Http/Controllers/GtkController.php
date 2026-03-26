@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class GtkController extends Controller
 {
@@ -38,6 +39,7 @@ class GtkController extends Controller
     public function store(Request $request)
     {
         Gate::authorize('create', Gtk::class);
+
         $data = $request->validate([
             'type' => 'required|string',
             'nik' => 'required|numeric',
@@ -59,6 +61,9 @@ class GtkController extends Controller
             'provinsi' => 'required|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'satuan_kerja_id' => 'required|exists:satuan_kerja,id',
+            'tugas_tambahan_id' => 'required_if:type,TU|exists:tugas_tambahan,id',
+            'mapel' => 'required_if:type,GURU',
+            'mapel_point' => 'required_if:type,GURU',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -118,7 +123,16 @@ class GtkController extends Controller
             'provinsi' => 'required|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'satuan_kerja_id' => 'required|exists:satuan_kerja,id',
+            'tugas_tambahan_id' => 'required_if:type,TU|exists:tugas_tambahan,id',
+            'mapel' => 'required_if:type,GURU',
+            'mapel_point' => 'required_if:type,GURU',   
         ]);
+
+        $data = array_merge([
+            'tugas_tambahan_id' => null,
+            'mapel' => null,
+            'mapel_point' => null,
+        ], $data);
 
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('photos', 'public');
@@ -140,17 +154,32 @@ class GtkController extends Controller
         return redirect()->route('gtk.index')->with('success', 'GTK berhasil dihapus');
     }
 
-    public function generateCredentials(Gtk $gtk)
+    public function generateCredentials(Gtk $gtk, $password = null, $password_hash = null)
     {
         Gate::authorize('update', $gtk);
-        $password = Str::password(12);
+        $password = $password ?? Str::password(12);
+
+        $nickname = str($gtk->name)
+            ->lower()
+            ->replaceMatches('/^dr(a|s)\.\s?/', '')
+            ->trim()
+            ->before(' ')
+            ->before(',')
+            ->replaceMatches('/[^a-z]/i', '');
+        
+        $i = 1;
+        $postfix = '@qomarulhidayah.or.id';
+        $email = $nickname . $postfix;
+        while (User::where('email', $email)->exists()) {
+            $email = $nickname . ($i++) . $postfix;
+        }
 
         User::firstOrCreate([
-            'email' => $gtk->nik . '@madrasah.web.id',
+            'email' => $email,
         ], [
             'name' => $gtk->name,
-            'password' => bcrypt($password),
             'default_password' => $password,
+            'password' => $password_hash ?? bcrypt($password),
             'gtk_id' => $gtk->id,
         ]);
 

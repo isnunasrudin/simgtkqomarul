@@ -9,13 +9,16 @@
 </div>
 @endif
 @csrf
-<div class="row">
+<div class="row" x-data="{
+    type: '{{ old('type', data_get($gtk ?? null, 'type', 'GURU')) }}', 
+    has_secondary_job: {{ old('has_secondary_job', data_get($gtk ?? null, 'tugas_tambahan_id', false)) ? 'true' : 'false' }} 
+}">
     <div class="col-md-6">
         <div class="form-group">
             <label for="type">Jenis Kepegawaian<sup style="color: red;">*</sup></label>
-            <select class="form-control" id="type" name="type" required>
-                <option value="GURU" @selected(old('type', data_get($gtk ?? null, 'type')) == 'Guru')>Guru</option>
-                <option value="TU" @selected(old('type', data_get($gtk ?? null, 'type')) == 'TU')>Tenaga Kependidikan</option>
+            <select class="form-control" id="type" name="type" required x-model="type">
+                <option value="GURU">Guru</option>
+                <option value="TU">Tenaga Kependidikan</option>
             </select>
         </div>
         <div class="form-group">
@@ -117,6 +120,41 @@
                 @endforeach
             </select>
         </div>
+        <template x-if="type === 'GURU'">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="mapel">Mengajar<sup style="color: red;">*</sup></label>
+                        <input type="text" class="form-control" id="mapel" name="mapel" value="{{ old('mapel', data_get($gtk ?? null, 'mapel')) }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="mapel_point">Jam Pembelajaran<sup style="color: red;">*</sup></label>
+                        <input type="number" class="form-control" id="mapel_point" name="mapel_point" value="{{ old('mapel_point', data_get($gtk ?? null, 'mapel_point')) }}">
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template x-if="type === 'GURU'">
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox" value="" x-model="has_secondary_job">
+                    <span class="form-check-sign">Memiliki Tugas Tambahan</span>
+                </label>
+            </div>
+        </template>
+        <template x-if="has_secondary_job || type === 'TU'">
+            <div class="form-group">
+                <label for="tugas_tambahan_id">Tugas <span x-text="type === 'TU' ? 'Pokok' : 'Tambahan'"></span><sup style="color: red;">*</sup></label>
+                <select class="form-control" id="tugas_tambahan_id" name="tugas_tambahan_id" required>
+                    <option value="">Tidak Ada</option>
+                    @foreach (\App\Models\Ref\TugasTambahan::all() as $item)
+                        <option value="{{ $item->id }}" @selected(old('tugas_tambahan_id', data_get($gtk ?? null, 'tugas_tambahan_id')) == $item->id)>{{ $item->name }}</option>
+                    @endforeach
+                    </select>
+                </div>
+        </template>
         <div class="form-group">
             <label for="nik">NIK</label>
             <input type="text" class="form-control" id="nik" name="nik" value="{{ old('nik', data_get($gtk ?? null, 'nik')) }}">
@@ -129,13 +167,19 @@
             <label for="nigy">NIGY</label>
             <input type="text" class="form-control" id="nigy" name="nigy" value="{{ old('nigy', data_get($gtk ?? null, 'nigy')) }}">
         </div>
-        <div class="form-group">
-            <label for="tmt_yayasan">TMT Yayasan</label>
-            <input type="text" class="form-control is-datepicker" id="tmt_yayasan" name="tmt_yayasan" value="{{ old('tmt_yayasan', data_get($gtk ?? null, 'tmt_yayasan')) }}">
-        </div>
-        <div class="form-group">
-            <label for="tmt_satker">TMT Satuan Kerja</label>
-            <input type="text" class="form-control is-datepicker" id="tmt_satker" name="tmt_satker" value="{{ old('tmt_satker', data_get($gtk ?? null, 'tmt_satker')) }}">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="tmt_yayasan">TMT Yayasan <sup style="color: red;">*</sup></label>
+                    <input type="text" class="form-control is-datepicker" id="tmt_yayasan" name="tmt_yayasan" value="{{ old('tmt_yayasan', data_get($gtk ?? null, 'tmt_yayasan')) }}">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="tmt_satker">TMT Satuan Kerja <sup style="color: red;">*</sup></label>
+                    <input type="text" class="form-control is-datepicker" id="tmt_satker" name="tmt_satker" value="{{ old('tmt_satker', data_get($gtk ?? null, 'tmt_satker')) }}">
+                </div>
+            </div>
         </div>
         <div class="form-group">
             <label for="photo">Foto</label>
@@ -150,6 +194,7 @@
 
 
 @push('footer')
+<script src="//unpkg.com/alpinejs" defer></script>
     <script>
     	$('.is-datepicker').datetimepicker({
             format: "YYYY-MM-DD"

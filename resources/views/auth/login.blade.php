@@ -69,7 +69,8 @@
                     @csrf
                     <div class="form-group">
                         <label for="email" class="placeholder"><b>Email</b></label>
-                        <input id="email" name="email" type="text" class="form-control" required>
+                        <input id="email" name="email" type="text" class="form-control" value="{{ old('email') }}"
+                            required>
                     </div>
                     <div class="form-group">
                         <label for="password" class="placeholder"><b>Kata Sandi</b></label>

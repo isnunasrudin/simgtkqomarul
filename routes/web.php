@@ -10,8 +10,10 @@ use App\Http\Controllers\Ref\InstansiController;
 use App\Http\Controllers\Ref\TugasTambahanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WizardController;
+use App\Imports\OldAppImport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
+use Maatwebsite\Excel\Facades\Excel;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', DashboardController::class)->name('/');
@@ -50,6 +52,5 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::get('test', function () {
-    request()->headers->set('Accept', 'application/json');
-    dd(request()->expectsJson());
+    Excel::import(new OldAppImport(), storage_path('QOMARUL.xlsx'));
 });

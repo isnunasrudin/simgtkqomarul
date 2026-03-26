@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Ref\TugasTambahan;
 use App\Models\SatuanKerja;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
@@ -45,6 +46,10 @@ return new class extends Migration
             $table->date('tmt_satker')->nullable();
 
             $table->string('photo')->nullable();
+            
+            //GURU
+            $table->string('mapel')->nullable();
+            $table->unsignedInteger('mapel_point')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

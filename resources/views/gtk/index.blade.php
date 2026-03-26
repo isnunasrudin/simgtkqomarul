@@ -70,8 +70,8 @@
 											<img src="{{ \Storage::url($gtk->photo) }}" alt="" class="img-thumbnail mr-2" style="width: 50px; height: 50px;">
 											@endif
 											<div>
-												<h4 class="mb-0 font-weight-bold text-primary">{{ $gtk->name }}</h4>
-												<span><small>{{ $gtk->type == 'TU' ? 'Tenaga Kependidikan' : 'Guru' }}</small></span>
+												<p class="mb-0 font-weight-bold text-primary">{{ $gtk->name }}</p>
+												<small>{{ $gtk->type == 'TU' ? 'Tenaga Kependidikan' : 'Guru' }}</small>
 											</div>
 										</a>
 									</td>
