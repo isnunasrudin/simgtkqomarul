@@ -2,7 +2,7 @@
 <div class="sidebar sidebar-style-2">
 	<div class="sidebar-wrapper scrollbar scrollbar-inner">
 		<div class="sidebar-content">
-			<div class="user">
+			{{-- <div class="user">
 				<div class="avatar-sm float-left mr-2">
 					<img src="{{ asset('img/profile.jpg') }}" alt="..." class="avatar-img rounded-circle">
 				</div>
@@ -38,7 +38,7 @@
 						</ul>
 					</div>
 				</div>
-			</div>
+			</div> --}}
 			<ul class="nav nav-primary">
 
 				<li class="nav-item @active('/')">
@@ -81,7 +81,7 @@
 							</li>
 							<li>
 								<a href="{{ route('ref.tugas_tambahan.index') }}">
-									<span class="sub-item">Tugas Tambahan</span>
+									<span class="sub-item">Tugas Non Guru</span>
 								</a>
 							</li>
 						</ul>

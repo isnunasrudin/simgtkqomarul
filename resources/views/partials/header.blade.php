@@ -2,8 +2,9 @@
 	<!-- Logo Header -->
 	<div class="logo-header" data-background-color="blue">
 
-		<a href="index.html" class="logo">
-			<img src="{{ asset('img/logo.svg') }}" alt="navbar brand" class="navbar-brand">
+		<a href="/" class="logo">
+			<img src="{{ asset('img/qomarul.webp') }}" alt="navbar brand" class="navbar-brand" height="40">
+			<span style="color: white; font-size: 12px !important;">SIMGTK Qomarul</span>
 		</a>
 		<button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon">
@@ -242,14 +243,14 @@
 				<li class="nav-item dropdown hidden-caret">
 					<a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
 						<div class="avatar-sm">
-							<img src="{{ asset('img/profile.jpg') }}" alt="..." class="avatar-img rounded-circle">
+							<img src="{{ asset('img/qomarul.webp') }}" alt="User" class="avatar-img rounded-circle">
 						</div>
 					</a>
 					<ul class="dropdown-menu dropdown-user animated fadeIn">
 						<div class="dropdown-user-scroll scrollbar-outer">
 							<li>
 								<div class="user-box">
-									<div class="avatar-lg"><img src="{{ asset('img/profile.jpg') }}" alt="image profile" class="avatar-img rounded"></div>
+									<div class="avatar-lg"><img src="{{ asset('img/qomarul.webp') }}" alt="image profile" class="avatar-img rounded"></div>
 									<div class="u-text">
 										<h4>{{ Auth::user()->name }}</h4>
 										<p class="text-muted">{{ Auth::user()->email }}</p>
