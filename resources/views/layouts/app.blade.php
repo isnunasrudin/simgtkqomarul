@@ -123,6 +123,7 @@
 
 	<!-- Atlantis JS -->
 	<script src="{{ asset('js/atlantis.min.js') }}"></script>
+	<script src="//unpkg.com/alpinejs" defer></script>
 
 	@stack('footer')
 

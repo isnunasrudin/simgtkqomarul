@@ -35,8 +35,9 @@
 						<table id="basic-datatables" class="display table table-striped table-hover">
 							<thead>
 								<tr>
+									<th>No</th>
 									<th>Instansi</th>
-									<th>Kredensial</th>
+									{{-- <th>Kredensial</th> --}}
 									<th>Nama</th>
 									<th>TTL</th>
 									<th>Masa Kerja</th>
@@ -46,10 +47,11 @@
 							<tbody>
 								@foreach ($allGtk as $gtk)
 								<tr>
+									<td>{{ $loop->iteration }}</td>
 									<td>
 										<span class="badge badge-primary">{{ $gtk->satuanKerja->name ?? '-' }}</span>
 									</td>
-									<td>
+									{{-- <td>
 										@if($gtk->user)
 										<span class="badge badge-success">
 											<i class="fa fa-check"></i>
@@ -63,7 +65,7 @@
 											</button>
 										</form>
 										@endif
-									</td>
+									</td> --}}
 									<td class="">
 										<a href="{{ route('gtk.edit', $gtk->id) }}" class="d-flex align-items-center text-dark" style="text-decoration: none">
 											@if($gtk->photo)
@@ -98,6 +100,6 @@
 
 @push('footer')
 <script>
-	$('#basic-datatables').DataTable({});
+	$('#basic-datatables').DataTable();
 </script>
 @endpush

@@ -22,7 +22,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/wizard', [WizardController::class, 'store'])->name('wizard.store');
 
     Route::resource('gtk', GtkController::class);
-    Route::patch('gtk/{gtk}/generate-credentials', [GtkController::class, 'generateCredentials'])->name('gtk.generate-credentials');
+    // Route::patch('gtk/{gtk}/generate-credentials', [GtkController::class, 'generateCredentials'])->name('gtk.generate-credentials');
     Route::apiResource('gtk.studies', GtkStudyController::class);
     Route::patch('gtk/{gtk}/studies/{study}/activate', [GtkStudyController::class, 'activate'])->name('gtk.studies.activate');
     Route::apiResource('gtk.contracts', GtkContractController::class);
@@ -38,12 +38,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::apiResource('contracts', ContractController::class);
     Route::get('contracts/{contract}/generate', [ContractController::class, 'generate'])->name('contracts.generate');
+    Route::post('contracts/generate-batch', [ContractController::class, 'generateBatch'])->name('contracts.generate-batch');
 
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
 Route::middleware('guest')->group(function () {
-
     Route::get('/login', [LoginController::class, 'index'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
 

@@ -24,11 +24,11 @@ class GtkStudyController extends Controller
     public function store(Request $request, Gtk $gtk)
     {
         $data = $request->validate([
-            'level' => 'required|in:SD,SLTP,SLTA,D1,D2,D3,D4,S1,S2,S3',
+            'level' => 'required|in:SD,SMP,SMA,D1,D2,D3,D4,S1,S2,S3',
             'jurusan' => 'nullable|string',
             'graduation_year' => 'required|date_format:Y',
             'certificate_number' => 'required|string',
-            'file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:8192',
             'institution' => 'required|string',
         ]);
 

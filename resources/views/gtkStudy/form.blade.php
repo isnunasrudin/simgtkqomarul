@@ -40,8 +40,8 @@
 
         
         <div class="form-group">
-            <label for="file">Scan Ijazah <sup style="color: red;">*</sup></label>
-            <input type="file" class="form-control-file" id="file" name="file" required accept=".pdf,image/*">
+            <label for="file">Scan Ijazah</label>
+            <input type="file" class="form-control-file" id="file" name="file" accept=".pdf,image/*">
         </div>
     </div>
 </div>

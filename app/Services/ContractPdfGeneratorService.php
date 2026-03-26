@@ -66,8 +66,8 @@ class ContractPdfGeneratorService
         return new self(
             nomor_sk: $contract->reference_number,
             tmt: Carbon::parse($contract->effective_date)->translatedFormat('d F Y'),
-            nama: strtoupper($contract->gtk->name),
-            nigy: NigyGeneratorService::fromContract($contract->gtk),
+            nama: $contract->gtk->name,
+            nigy: $contract->gtk->nigy,
             tempat_lahir: $contract->gtk->birth_place,
             tanggal_lahir: Carbon::parse($contract->gtk->birth_date)->translatedFormat('d F Y'),
             pendidikan: $contract->gtk->activeStudy?->level,

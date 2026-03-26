@@ -6,6 +6,7 @@ use App\Models\Gtk;
 use App\Models\GtkContract;
 use App\Models\Ref\TugasTambahan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class GtkContractController extends Controller
 {

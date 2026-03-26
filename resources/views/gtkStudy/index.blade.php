@@ -37,6 +37,15 @@
     </div>
 
     <div class="email-body">
+        @if($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -60,7 +69,7 @@
                                     </form>
                                 </td>
                                 <td>{{ $gtkStudy->level }}</td>
-                                <td>{{ $gtkStudy->jurusan }}</td>
+                                <td>{{ $gtkStudy->major }}</td>
                                 <td>{{ $gtkStudy->institution }}</td>
                                 <td>{{ $gtkStudy->graduation_year }}</td>
                                 <td>

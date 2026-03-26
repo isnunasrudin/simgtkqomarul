@@ -20,10 +20,45 @@
     </div>
     <div class="row">
         <div class="col-md-12">
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex align-items-center">
                         <h4 class="card-title">Data SK</h4>
+                        
+                        <button class="btn btn-primary ml-auto" data-toggle="modal" data-target="#createMassalSK">
+                            <i class="fas fa-plus"></i>
+                            Buat Surat Keputusan (SK)
+                        </button>
+                        <div class="modal fade" id="createMassalSK" tabindex="-1" role="dialog" aria-labelledby="createMassalSKLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document" style="max-width: 800px">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="createMassalSKLabel">Buat SK Massal</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{{ route('contracts.generate-batch') }}" method="POST" enctype="multipart/form-data" id="form-create-massal-sk">
+                                            @include('contracts.form')
+                                            <div class="d-flex justify-content-end mt-3">
+                                                <button type="submit" class="btn btn-primary d-inline-block">Simpan</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <div class="card-body">
@@ -157,7 +192,126 @@
 @endsection
 
 @push('footer')
+
+<script>
+    $(document).ready(function() {
+        $('.select2-input').select2({
+            theme: 'bootstrap',
+            search: true,
+            closeOnSelect: false
+        });
+
+        
+    	$('.is-datepicker').datetimepicker({
+            format: "YYYY-MM-DD"
+        });
+    });
+
+    function selectAllGtk(e) {
+        e.preventDefault();
+        $('#gtk_ids').val($('#gtk_ids option').map(function() { return $(this).val(); }).get());
+        $('#gtk_ids').trigger('change');
+    }
+
+    function deselectAllGtk(e) {
+        e.preventDefault();
+        $('#gtk_ids').val([]);
+        $('#gtk_ids').trigger('change');
+    }
+
+    function selectAllSatker(e) {
+        e.preventDefault();
+        $('#satker_ids').val($('#satker_ids option').map(function() { return $(this).val(); }).get());
+        $('#satker_ids').trigger('change');
+    }
+
+    function deselectAllSatker(e) {
+        e.preventDefault();
+        $('#satker_ids').val([]);
+        $('#satker_ids').trigger('change');
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $('#basic-datatables').DataTable({});
+    $('#form-create-massal-sk').submit(async function(e){
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        
+        // Tampilkan loading
+        Swal.fire({
+            title: 'Loading...',
+            text: 'Sedang memproses data...',
+            icon: 'info',
+            allowOutsideClick: false,
+            showConfirmButton: false
+        });
+
+        try {
+            const response = await fetch("{{ route('contracts.generate-batch') }}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            await Swal.fire({
+                title: 'Memproses Data...',
+                html: `
+                    <div class="progress-container" style="width: 100%; background: #eee; border-radius: 10px; margin-top: 10px;">
+                        <div id="progress-bar" style="width: 0%; height: 20px; background: #3085d6; border-radius: 10px; transition: width 0.3s;"></div>
+                    </div>
+                    <p id="progress-text" style="margin-top: 10px;">Menghubungkan ke server...</p>
+                `,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: async () => {
+                    const bar = document.getElementById('progress-bar');
+                    const text = document.getElementById('progress-text');
+
+                    const total = data.contracts.length;
+                    let current = 0;
+
+                    try {
+                        
+                        for await (const id of data.contracts) {
+                            await fetch("/contracts/" + id + "/generate", {
+                                method: 'GET',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json'
+                                }
+                            });
+                            
+                            current++;
+                            const percentage = (current / total) * 100;
+                            bar.style.width = percentage + '%';
+                            text.innerText = `Memproses data ${current} dari ${total} (${percentage.toFixed(0)}%)`;
+                        }
+
+                        Swal.clickConfirm();
+                        location.reload();
+                    } catch (error) {
+                        Swal.showValidationMessage(`Request failed: ${error}`);
+                    }
+                }
+            });
+            
+
+        } catch (error) {
+            console.log(error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Terjadi kesalahan saat memproses data',
+                icon: 'error',
+                timer: 1000,
+                showConfirmButton: false
+            });
+        }
+    })
 </script>
 @endpush

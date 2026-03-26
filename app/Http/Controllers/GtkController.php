@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Gtk;
 use App\Models\User;
+use App\Services\NigyGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -74,6 +75,12 @@ class GtkController extends Controller
         $request->merge([
             'gtk' => $gtk,
         ]);
+
+        if($request->nigy == null) {
+            $gtk->update([
+                'nigy' => NigyGeneratorService::fromContract($gtk),
+            ]);
+        }
 
         return redirect()->route('gtk.index')->with('success', 'GTK berhasil ditambahkan');
     }
@@ -162,6 +169,9 @@ class GtkController extends Controller
         $nickname = str($gtk->name)
             ->lower()
             ->replaceMatches('/^dr(a|s)\.\s?/', '')
+            ->replaceMatches('/^hj?\.\s?/', '')
+            ->replaceMatches('/^m(u|o)c?hamm?ad\s?/', '')
+            ->replaceMatches('/^nur\s/', '')
             ->trim()
             ->before(' ')
             ->before(',')
@@ -174,13 +184,16 @@ class GtkController extends Controller
             $email = $nickname . ($i++) . $postfix;
         }
 
-        User::firstOrCreate([
+        $user = User::firstOrCreate([
             'email' => $email,
         ], [
             'name' => $gtk->name,
             'default_password' => $password,
             'password' => $password_hash ?? bcrypt($password),
-            'gtk_id' => $gtk->id,
+        ]);
+
+        $gtk->update([
+            'user_id' => $user->id,
         ]);
 
         return redirect()->route('users.index')->with('success', 'Kredensial berhasil dibuat');

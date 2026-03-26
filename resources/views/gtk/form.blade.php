@@ -194,7 +194,6 @@
 
 
 @push('footer')
-<script src="//unpkg.com/alpinejs" defer></script>
     <script>
     	$('.is-datepicker').datetimepicker({
             format: "YYYY-MM-DD"

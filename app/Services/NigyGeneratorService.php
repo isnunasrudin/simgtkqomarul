@@ -20,7 +20,7 @@ class NigyGeneratorService
             Carbon::parse($gtk->tmt_yayasan)->format('Ym'),
             $gtk->type == 'TU' ? '02' : '01',
             $gtk->satuanKerja->code,
-            $gtk->duk ?? '01'
+            $gtk->duk ?? str($gtk->id)->padLeft(2, '0')
         );
     }
 }

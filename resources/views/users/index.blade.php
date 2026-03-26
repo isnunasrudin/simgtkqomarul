@@ -154,7 +154,19 @@
 
 @push('footer')
 <script>
-	$('#basic-datatables').DataTable({});
+	$('#basic-datatables').DataTable({
+		"columnDefs": [
+				{
+					"targets": [0, 2, 4, 5, 6], 
+					"searchable": false,
+					"orderable": false
+				},
+				{
+					"targets": [1, 3],
+					"searchable": true
+				}
+			]
+	});
 
 	$('.select2').select2({
 		theme: 'bootstrap',

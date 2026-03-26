@@ -79,7 +79,3 @@
 
     </div>
 </div>
-
-@push('footer')
-<script src="//unpkg.com/alpinejs" defer></script>
-@endpush
