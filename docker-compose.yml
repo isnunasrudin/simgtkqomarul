@@ -9,7 +9,7 @@ services:
             - db
         environment:
             SSL_MODE: "mixed"
-            AUTORUN_ENABLED: true
+            AUTORUN_ENABLED: false
             PHP_OPCACHE_ENABLE: "1"
             PHP_MEMORY_LIMIT: "1024M"
 
