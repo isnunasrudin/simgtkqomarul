@@ -63,5 +63,5 @@ after('artisan:route:cache', 'artisan:view:cache');
 after('artisan:view:cache', 'artisan:event:cache');
 after('artisan:event:cache', 'artisan:migrate');
 
-after('deploy:symlink', 'docker:up');
+after('deploy:vendors', 'docker:up');
 after('deploy:failed', 'deploy:unlock');
