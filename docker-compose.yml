@@ -1,3 +1,4 @@
+name: simgtkqomarul-production
 services:
     app:
         build:
