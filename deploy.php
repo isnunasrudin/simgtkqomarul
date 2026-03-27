@@ -1,67 +1,124 @@
 <?php
+
 namespace Deployer;
 
 require 'recipe/laravel.php';
 
-// Config
-
+// Config dasar
+set('application', 'simgtkqomarul');
 set('repository', 'git@github.com:isnunasrudin/simgtkqomarul.git');
 
-add('shared_files', []);
-add('shared_dirs', []);
-add('writable_dirs', []);
+set('deploy_path', '/var/www/simgtkqomarul');
 
-// Hosts
+// Shared
+add('shared_files', ['.env']);
+add('shared_dirs', ['storage']);
 
+// Writable
+add('writable_dirs', ['storage']);
+
+// Host
 host('qomarul')
     ->set('remote_user', 'root')
     ->set('deploy_path', '/srv/gtkqomarul');
 
+// ==========================
+// Override default behavior
+// ==========================
 
+// ❌ disable vendor bawaan (karena pakai docker)
 task('deploy:vendors', function () {
-    run('cd {{release_path}} && docker-compose exec -T app composer install --no-dev --optimize-autoloader');
+    // kosongkan (override)
 });
 
-task('artisan:storage:link', function () {
-    run('cd {{release_path}} && docker-compose exec -T app php artisan storage:link');
+// ==========================
+// Custom Docker Tasks
+// ==========================
+
+// Build image
+task('docker:build', function () {
+    run('cd {{release_path}} && docker compose build');
+});
+
+// Up container
+task('docker:up', function () {
+    run('cd {{release_path}} && docker compose up -d');
+});
+
+// Composer di container
+task('docker:composer', function () {
+    run('cd {{release_path}} && docker compose exec -T app composer install --no-dev --optimize-autoloader');
+});
+
+// Artisan wrapper
+task('docker:artisan', function () {
+    run('cd {{release_path}} && docker compose exec -T app php artisan {{command}}');
+});
+
+// ==========================
+// Hook ke lifecycle resmi
+// ==========================
+
+// Setelah code di-update → build & up container
+after('deploy:update_code', 'docker:build');
+after('docker:build', 'docker:up');
+
+// Setelah container jalan → install vendor
+after('docker:up', 'docker:composer');
+
+// Replace artisan tasks ke container
+task('artisan:migrate', function () {
+    invoke('docker:artisan', ['command' => 'migrate --force']);
 });
 
 task('artisan:config:cache', function () {
-    run('cd {{release_path}} && docker-compose exec -T app php artisan config:cache');
+    invoke('docker:artisan', ['command' => 'config:cache']);
 });
 
 task('artisan:route:cache', function () {
-    run('cd {{release_path}} && docker-compose exec -T app php artisan route:cache');
+    invoke('docker:artisan', ['command' => 'route:cache']);
 });
 
 task('artisan:view:cache', function () {
-    run('cd {{release_path}} && docker-compose exec -T app php artisan view:cache');
+    invoke('docker:artisan', ['command' => 'view:cache']);
 });
 
 task('artisan:event:cache', function () {
-    run('cd {{release_path}} && docker-compose exec -T app php artisan event:cache');
+    invoke('docker:artisan', ['command' => 'event:cache']);
 });
 
-task('artisan:migrate', function () {
-    run('cd {{release_path}} && docker-compose exec -T app php artisan migrate --force');
+task('artisan:storage:link', function () {
+    invoke('docker:artisan', ['command' => 'storage:link']);
 });
 
-task('docker:down', function () {
-    // Gunakan current_path karena aplikasi yang sedang jalan ada di sana
-    run('if [ -d {{current_path}} ]; then cd {{current_path}} && docker-compose exec -T app php artisan down; fi');
-});
+// ==========================
+// Main deploy flow (ikuti official)
+// ==========================
 
-task('docker:up', function () {
-    run('cd {{current_path}} && docker-compose exec -T app php artisan up');
-});
+desc('Deploy Laravel via Docker');
+task('deploy', [
+    'deploy:prepare',
+    'deploy:lock',
+    'deploy:release',
+    'deploy:update_code',
+    'deploy:env',
+    'deploy:shared',
+    'deploy:writable',
 
-before('deploy:prepare', 'docker:down');
-after('deploy:vendors', 'artisan:storage:link');
-after('artisan:storage:link', 'artisan:config:cache');
-after('artisan:config:cache', 'artisan:route:cache');
-after('artisan:route:cache', 'artisan:view:cache');
-after('artisan:view:cache', 'artisan:event:cache');
-after('artisan:event:cache', 'artisan:migrate');
+    // custom docker flow
+    'docker:build',
+    'docker:up',
+    'docker:composer',
 
-after('deploy:vendors', 'docker:up');
+    // artisan
+    'artisan:storage:link',
+    'artisan:config:cache',
+    'artisan:route:cache',
+    'artisan:view:cache',
+    'artisan:event:cache',
+    'artisan:migrate',
+
+    'deploy:publish',
+]);
+
 after('deploy:failed', 'deploy:unlock');
