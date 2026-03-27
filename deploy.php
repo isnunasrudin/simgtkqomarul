@@ -2,7 +2,7 @@
 
 namespace Deployer;
 
-require 'recipe/laravel.php';
+// require 'recipe/laravel.php';
 
 // Config dasar
 set('application', 'simgtkqomarul');
@@ -96,29 +96,13 @@ task('artisan:storage:link', function () {
 // ==========================
 
 desc('Deploy Laravel via Docker');
-task('deploy', [
-    'deploy:prepare',
-    'deploy:lock',
-    'deploy:release',
-    'deploy:update_code',
-    'deploy:env',
-    'deploy:shared',
-    'deploy:writable',
+// setelah code diupdate
+after('deploy:update_code', 'docker:build');
 
-    // custom docker flow
-    'docker:build',
-    'docker:up',
-    'docker:composer',
+// setelah build → jalankan container
+after('docker:build', 'docker:up');
 
-    // artisan
-    'artisan:storage:link',
-    'artisan:config:cache',
-    'artisan:route:cache',
-    'artisan:view:cache',
-    'artisan:event:cache',
-    'artisan:migrate',
-
-    'deploy:publish',
-]);
+// setelah container jalan → composer
+after('docker:up', 'docker:composer');
 
 after('deploy:failed', 'deploy:unlock');
