@@ -44,17 +44,17 @@ task('artisan:route:cache', function () {
 });
 
 task('artisan:view:cache', function () {
-    set('command', 'view:cache');
+    set('artisan_command', 'view:cache');
     invoke('docker:artisan');
 });
 
 task('artisan:event:cache', function () {
-    set('command', 'event:cache');
+    set('artisan_command', 'event:cache');
     invoke('docker:artisan');
 });
 
 task('artisan:storage:link', function () {
-    set('command', 'storage:link');
+    set('artisan_command', 'storage:link');
     invoke('docker:artisan');
 });
 
