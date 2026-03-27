@@ -21,7 +21,7 @@ task('docker:composer', function () {
     run('cd {{deploy_path}}/release && docker compose exec -T app sh -c "cd {{deploy_path}}/release && composer install --no-dev --optimize-autoloader"');
 });
 task('docker:artisan', function () {
-    $command = input('command');
+    $command = input('artisan_command');
     run('cd {{deploy_path}}/release && docker compose exec -T app sh -c "cd {{deploy_path}}/release && php artisan '.$command.'"');
 });
 
@@ -29,17 +29,17 @@ after('deploy:update_code', 'docker:build');
 after('docker:build', 'docker:up');
 
 task('artisan:migrate', function () {
-    set('command', 'migrate --force');
+    set('artisan_command', 'migrate --force');
     invoke('docker:artisan');
 });
 
 task('artisan:config:cache', function () {
-    set('command', 'config:cache');
+    set('artisan_command', 'config:cache');
     invoke('docker:artisan');
 });
 
 task('artisan:route:cache', function () {
-    set('command', 'route:cache');
+    set('artisan_command', 'route:cache');
     invoke('docker:artisan');
 });
 
