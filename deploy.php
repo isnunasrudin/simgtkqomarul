@@ -21,34 +21,41 @@ task('docker:composer', function () {
     run('cd {{deploy_path}}/release && docker compose exec -T app sh -c "cd {{deploy_path}}/release && composer install --no-dev --optimize-autoloader"');
 });
 task('docker:artisan', function () {
-    run('cd {{deploy_path}}/release && docker compose exec -T app sh -c "cd {{deploy_path}}/release && php artisan {{command}}"');
+    $command = input('command');
+    run('cd {{deploy_path}}/release && docker compose exec -T app sh -c "cd {{deploy_path}}/release && php artisan '.$command.'"');
 });
 
 after('deploy:update_code', 'docker:build');
 after('docker:build', 'docker:up');
 
 task('artisan:migrate', function () {
-    invoke('docker:artisan', ['command' => 'migrate --force']);
+    set('command', 'migrate --force');
+    invoke('docker:artisan');
 });
 
 task('artisan:config:cache', function () {
-    invoke('docker:artisan', ['command' => 'config:cache']);
+    set('command', 'config:cache');
+    invoke('docker:artisan');
 });
 
 task('artisan:route:cache', function () {
-    invoke('docker:artisan', ['command' => 'route:cache']);
+    set('command', 'route:cache');
+    invoke('docker:artisan');
 });
 
 task('artisan:view:cache', function () {
-    invoke('docker:artisan', ['command' => 'view:cache']);
+    set('command', 'view:cache');
+    invoke('docker:artisan');
 });
 
 task('artisan:event:cache', function () {
-    invoke('docker:artisan', ['command' => 'event:cache']);
+    set('command', 'event:cache');
+    invoke('docker:artisan');
 });
 
 task('artisan:storage:link', function () {
-    invoke('docker:artisan', ['command' => 'storage:link']);
+    set('command', 'storage:link');
+    invoke('docker:artisan');
 });
 
 task('deploy:vendors', function () {
