@@ -1,0 +1,25 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - ./www:/var/www/html
+        depends_on:
+            - db
+        environment:
+            SSL_MODE: "mixed"
+            AUTORUN_ENABLED: true
+            PHP_OPCACHE_ENABLE: "1"
+            PHP_MEMORY_LIMIT: "1024M"
+
+    db:
+        image: postgres:16
+
+        environment:
+            POSTGRES_DB: ${DB_DATABASE:-laravel_db}
+            POSTGRES_USER: ${DB_USERNAME:-laravel_user}
+            POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+
+        volumes:
+            - ./storage/database:/var/lib/postgresql/data
