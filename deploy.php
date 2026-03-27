@@ -21,8 +21,7 @@ task('docker:composer', function () {
     run('cd {{deploy_path}}/release && docker compose exec -T app sh -c "cd {{deploy_path}}/release && composer install --no-dev --optimize-autoloader"');
 });
 task('docker:artisan', function () {
-    $command = input('artisan_command');
-    run('cd {{deploy_path}}/release && docker compose exec -T app sh -c "cd {{deploy_path}}/release && php artisan '.$command.'"');
+    run('cd {{deploy_path}}/release && docker compose exec -T app sh -c "cd {{deploy_path}}/release && php artisan {{artisan_command}}"');
 });
 
 after('deploy:update_code', 'docker:build');
