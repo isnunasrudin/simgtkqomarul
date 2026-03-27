@@ -2,7 +2,7 @@
 
 namespace Deployer;
 
-// require 'recipe/laravel.php';
+require 'recipe/laravel.php';
 
 // Config dasar
 set('application', 'simgtkqomarul');
