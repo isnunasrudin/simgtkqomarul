@@ -24,4 +24,4 @@ services:
             POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
 
         volumes:
-            - /srv/simgtkqomarul/shared/storage/database:/var/lib/postgresql/data
+            - ./storage/database:/var/lib/postgresql/data
