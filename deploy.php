@@ -17,6 +17,9 @@ task('docker:build', function () {
 task('docker:up', function () {
     run('cd {{deploy_path}}/release && docker compose up -d');
 });
+task('docker:down', function () {
+    run('cd {{deploy_path}}/release && docker compose down');
+});
 task('docker:composer', function () {
     run('cd {{deploy_path}}/release && docker compose exec -T app sh -c "cd {{deploy_path}}/release && composer install --no-dev --optimize-autoloader"');
 });
